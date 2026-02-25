@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Landrace Heritage | Mood</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+#mood-widget {
+  background: #F5F2EC;
+  border-radius: 16px;
+  padding: 36px 32px 32px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.mw-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1B3A2F;
+  opacity: 0.55;
+  margin-bottom: 10px;
+}
+
+.mw-question {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1B3A2F;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.mw-sub {
+  font-size: 14px;
+  color: #1B3A2F;
+  opacity: 0.6;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.mw-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mw-option {
+  background: #fff;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: border-color 0.18s, transform 0.15s, box-shadow 0.18s;
+  text-align: left;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.mw-option:hover {
+  border-color: #1B3A2F;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(27,58,47,0.10);
+}
+
+.mw-option:active {
+  transform: translateY(0);
+}
+
+.mw-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mw-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mw-option-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1B3A2F;
+}
+
+.mw-option-hint {
+  font-size: 13px;
+  color: #1B3A2F;
+  opacity: 0.55;
+}
+
+/* Result state */
+.mw-result {
+  display: none;
+  animation: mwFadeUp 0.35s ease both;
+}
+
+@keyframes mwFadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mw-result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1B3A2F;
+  color: #fff;
+  border-radius: 100px;
+  padding: 6px 16px 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.mw-result-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.5;
+}
+
+.mw-result-headline {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1B3A2F;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.mw-result-body {
+  font-size: 14.5px;
+  color: #1B3A2F;
+  opacity: 0.75;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.mw-result-card {
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mw-result-card-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.mw-result-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  opacity: 0.65;
+}
+
+.mw-result-card-name {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.mw-result-card-detail {
+  font-size: 13px;
+  opacity: 0.65;
+}
+
+.mw-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mw-btn-primary {
+  background: #1B3A2F;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.mw-btn-primary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.mw-btn-ghost {
+  background: transparent;
+  color: #1B3A2F;
+  border: 2px solid #1B3A2F;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.mw-btn-ghost:hover { opacity: 0.9; }
+
+.mw-step {
+  display: none;
+}
+.mw-step.active {
+  display: block;
+  animation: mwFadeUp 0.3s ease both;
+}
+
+.mw-progress {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.mw-pip {
+  height: 4px;
+  flex: 1;
+  border-radius: 4px;
+  background: #D6D0C4;
+  transition: background 0.3s;
+}
+
+.mw-pip.done {
+  background: #1B3A2F;
+}
+</style>
+</head>
+<body>
+
+<div id="mood-widget">
+
+  <!-- Step 1 -->
+  <div class="mw-step active" id="step1">
+    <div class="mw-progress">
+      <div class="mw-pip done" id="pip1"></div>
+      <div class="mw-pip" id="pip2"></div>
+    </div>
+    <div class="mw-eyebrow">Landrace heritage finder</div>
+    <div class="mw-question">How do you want to feel?</div>
+    <div class="mw-sub">Pick the one that sounds most like you right now.</div>
+    <div class="mw-options">
+      <button class="mw-option" onclick="pickVibe('energy')">
+        <div class="mw-icon">⚡</div>
+        <div class="mw-option-text">
+          <div class="mw-option-label">Energized &amp; focused</div>
+          <div class="mw-option-hint">Clear-headed, motivated, ready to move</div>
+        </div>
+      </button>
+      <button class="mw-option" onclick="pickVibe('calm')">
+        <div class="mw-icon">🌿</div>
+        <div class="mw-option-text">
+          <div class="mw-option-label">Calm &amp; settled</div>
+          <div class="mw-option-hint">Relaxed, present, winding down</div>
+        </div>
+      </button>
+      <button class="mw-option" onclick="pickVibe('creative')">
+        <div class="mw-icon">✦</div>
+        <div class="mw-option-text">
+          <div class="mw-option-label">Creative &amp; curious</div>
+          <div class="mw-option-hint">Open, playful, in a flow state</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="mw-step" id="step2">
+    <div class="mw-progress">
+      <div class="mw-pip done"></div>
+      <div class="mw-pip done"></div>
+    </div>
+    <div class="mw-eyebrow">One more</div>
+    <div class="mw-question">When are you reaching for it?</div>
+    <div class="mw-sub">Terpene profiles shift with the time of day.</div>
+    <div class="mw-options">
+      <button class="mw-option" onclick="pickTime('day')">
+        <div class="mw-icon">☀️</div>
+        <div class="mw-option-text">
+          <div class="mw-option-label">Daytime</div>
+          <div class="mw-option-hint">Morning through afternoon</div>
+        </div>
+      </button>
+      <button class="mw-option" onclick="pickTime('night')">
+        <div class="mw-icon">🌙</div>
+        <div class="mw-option-text">
+          <div class="mw-option-label">Evening or night</div>
+          <div class="mw-option-hint">After work, before bed</div>
+        </div>
+      </button>
+      <button class="mw-option" onclick="pickTime('any')">
+        <div class="mw-icon">🔁</div>
+        <div class="mw-option-text">
+          <div class="mw-option-label">Whenever</div>
+          <div class="mw-option-hint">No preference</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="mw-result" id="result">
+    <div id="result-inner"></div>
+    <button class="mw-btn-ghost" onclick="restart()" style="margin-top:4px;">↩ Start over</button>
+  </div>
+
+</div>
+
+<script>
+  var vibe = null;
+
+  var results = {
+    ganja_day: {
+      badge: 'Ganja lineage · South Africa',
+      headline: 'You\u2019re a Durban Poison descendant.',
+      body: 'Ganja landraces were selected for clear, cerebral flower. Durban Poison — one of the most well-documented African landraces — is terpinolene-forward, which tends to pair with energized, focused effects rather than sedation. That terpene fingerprint carries forward into a lot of what\u2019s on shelves today.',
+      cardBg: '#E8F0E9',
+      cardColor: '#1B3A2F',
+      icon: '⚡',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Terpinolene',
+      cardDetail: 'Pine, floral, herbal \u2014 bright and clean',
+      cta: 'Shop Energized',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=energized'
+    },
+    ganja_night: {
+      badge: 'Ganja lineage · Southeast Asia',
+      headline: 'You\u2019re wired like a Thai landrace.',
+      body: 'Thai ganja landraces were known for their intensity — 1970s customs records logged some samples at 17% THC. They produced long, cerebral experiences that could feel overwhelming at night for some people. If you\u2019re drawn to that heritage but want it dialed in, look for terpene profiles that lean limonene or linalool over raw terpinolene.',
+      cardBg: '#EDE8F5',
+      cardColor: '#3B2A5A',
+      icon: '✦',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Limonene',
+      cardDetail: 'Citrus, bright \u2014 balances intensity',
+      cta: 'Shop Creative',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=creative'
+    },
+    ganja_any: {
+      badge: 'Ganja lineage · Colombia & Mexico',
+      headline: 'You\u2019re a Haze hybrid at heart.',
+      body: 'Strains like Acapulco Gold and Colombian Gold were two of the three landrace parents behind Skunk #1 \u2014 the first modern hybrid and the genetic ancestor of nearly everything on shelves today. Their terpene diversity was wide, making them adaptable across times of day. That same flexibility is what you\u2019re after.',
+      cardBg: '#FDF3E3',
+      cardColor: '#5A3A1A',
+      icon: '🌿',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Myrcene + Terpinolene',
+      cardDetail: 'Earthy base, bright top \u2014 balanced and versatile',
+      cta: 'Shop All Flower',
+      ctaUrl: 'https://mood.com/shop/product-category/flower'
+    },
+    calm_day: {
+      badge: 'Charas lineage · Afghanistan',
+      headline: 'You\u2019re rooted in Hindu Kush genetics.',
+      body: 'Charas landraces from the Hindu Kush were selected for resin production for thousands of years. They\u2019re myrcene-dominant, which is associated with calming, grounding effects without putting you to sleep mid-afternoon. That terpene signature still shows up in indica-leaning hybrids today.',
+      cardBg: '#E8F0E9',
+      cardColor: '#1B3A2F',
+      icon: '🌿',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Myrcene',
+      cardDetail: 'Earthy, herbal \u2014 the most common cannabis terpene',
+      cta: 'Shop Focused',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=focused'
+    },
+    calm_night: {
+      badge: 'Charas lineage · Hindu Kush',
+      headline: 'You\u2019re built for Afghani heritage.',
+      body: 'Afghani landraces are the most widely distributed charas genetics in the modern market \u2014 parent genetics appear in nearly every indica-leaning hybrid. They were selected over centuries for dense resin, fast flowering, and a deeply calming body effect. Almost every evening-use hybrid traces back here.',
+      cardBg: '#E8F0E9',
+      cardColor: '#1B3A2F',
+      icon: '🌙',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Myrcene + Guaiol',
+      cardDetail: 'Earthy, skunky \u2014 the charas signature',
+      cta: 'Shop Sleepy',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=sleepy'
+    },
+    calm_any: {
+      badge: 'Charas lineage · Nepalese',
+      headline: 'You\u2019re drawn to Himalayan genetics.',
+      body: 'Nepalese landraces were cultivated for resin, fiber, and grain \u2014 multipurpose crops shaped by high-altitude farming. The distinct varieties (Gorkha, Dakshinkali) each carry slightly different profiles, but all share a grounding, calming base that works across the day. Look for myrcene-forward products with earthy aroma profiles.',
+      cardBg: '#E8F0E9',
+      cardColor: '#1B3A2F',
+      icon: '🌿',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Myrcene',
+      cardDetail: 'Earthy, herbal \u2014 consistent across charas varieties',
+      cta: 'Shop All Flower',
+      ctaUrl: 'https://mood.com/shop/product-category/flower'
+    },
+    creative_day: {
+      badge: 'Ganja lineage · Jamaica',
+      headline: 'You\u2019re a Lamb\u2019s Bread type.',
+      body: "Jamaican ganja landraces like Lamb's Bread were prized for energetic, creative effects. They're tall, airy-budded ganja types with long flowering times and terpene profiles that lean herbal and sweet. The creative, uplifting experience people associate with them runs through terpinolene and ocimene-rich hybrids today.",
+      cardBg: '#FDE8EC',
+      cardColor: '#5A1A2A',
+      icon: '✦',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Ocimene',
+      cardDetail: 'Sweet, floral, herbal \u2014 uplifting and social',
+      cta: 'Shop Creative',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=creative'
+    },
+    creative_night: {
+      badge: 'Ganja lineage · Southeast Asia',
+      headline: 'You\u2019re wired for a Thai session.',
+      body: 'Thai ganja landraces were described as producing powerful, long-lasting cerebral experiences \u2014 the kind that stretch time and open ideas. Their genetics became the backbone of Haze hybrids. Evening creativity that runs long is exactly that lineage. Look for terpene profiles with limonene and linalool to keep it smooth.',
+      cardBg: '#EDE8F5',
+      cardColor: '#3B2A5A',
+      icon: '✦',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Linalool + Limonene',
+      cardDetail: 'Floral, citrus \u2014 creative without the edge',
+      cta: 'Shop Creative',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=creative'
+    },
+    creative_any: {
+      badge: 'Ganja lineage · Malawi',
+      headline: 'You\u2019re a Malawi at heart.',
+      body: 'Malawi is one of the most extreme ganja landraces \u2014 12\u201316 week flowering time, one of the longest of any documented landrace. The intensity of selection that went into those genetics produced some of the most distinctive cerebral profiles. Anytime creativity that doesn\u2019t care about the clock is pure Malawi energy.',
+      cardBg: '#FDE8EC',
+      cardColor: '#5A1A2A',
+      icon: '✦',
+      cardLabel: 'Terpene to look for',
+      cardName: 'Terpinolene + Ocimene',
+      cardDetail: 'Bright, floral, active \u2014 the equatorial signature',
+      cta: 'Shop Creative',
+      ctaUrl: 'https://mood.com/shop/product-category/flower?mood=creative'
+    }
+  };
+
+  function goTo(stepId) {
+    document.querySelectorAll('.mw-step').forEach(function(s) { s.classList.remove('active'); });
+    var el = document.getElementById(stepId);
+    if (el) el.classList.add('active');
+  }
+
+  function pickVibe(v) {
+    vibe = v;
+    goTo('step2');
+  }
+
+  function pickTime(t) {
+    var key = vibe + '_' + t;
+    var r = results[key];
+    if (!r) return;
+
+    document.querySelectorAll('.mw-step').forEach(function(s) { s.classList.remove('active'); });
+
+    var inner = document.getElementById('result-inner');
+    inner.innerHTML =
+      '<div class="mw-result-badge"><div class="mw-result-badge-dot"></div>' + r.badge + '</div>' +
+      '<div class="mw-result-headline">' + r.headline + '</div>' +
+      '<div class="mw-result-body">' + r.body + '</div>' +
+      '<div class="mw-result-card" style="background:' + r.cardBg + '; color:' + r.cardColor + '">' +
+        '<div class="mw-result-card-icon">' + r.icon + '</div>' +
+        '<div>' +
+          '<div class="mw-result-card-label" style="color:' + r.cardColor + '">' + r.cardLabel + '</div>' +
+          '<div class="mw-result-card-name" style="color:' + r.cardColor + '">' + r.cardName + '</div>' +
+          '<div class="mw-result-card-detail" style="color:' + r.cardColor + '">' + r.cardDetail + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mw-actions">' +
+        '<a class="mw-btn-primary" href="' + r.ctaUrl + '" target="_blank" rel="noopener">' + r.cta + ' →</a>' +
+      '</div>';
+
+    var resultEl = document.getElementById('result');
+    resultEl.style.display = 'block';
+    resultEl.style.animation = 'none';
+    void resultEl.offsetWidth;
+    resultEl.style.animation = 'mwFadeUp 0.35s ease both';
+  }
+
+  function restart() {
+    vibe = null;
+    document.getElementById('result').style.display = 'none';
+    goTo('step1');
+  }
+</script>
+</body>
+</html>
